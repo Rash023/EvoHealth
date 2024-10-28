@@ -36,14 +36,22 @@ export function SidebarLeft({
       {
         title: "Ask eH",
         icon: Sparkles,
+        link: "/",
       },
       {
         title: "Messages",
         icon: MessagesSquare,
+        link: "/",
       },
       {
         title: "Doctors",
         icon: ChartNetwork,
+        link: "/",
+      },
+      {
+        title: "Blogs",
+        icon: MessagesSquare,
+        link: "/blog",
       },
     ],
   };
@@ -138,10 +146,10 @@ function NavMain({
       {items.map((item) => (
         <SidebarMenuItem key={item.title}>
           <SidebarMenuButton asChild isActive={item.isActive}>
-            <div>
+            <a href={item.link}>
               <item.icon />
               <span>{item.title}</span>
-            </div>
+            </a>
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}
