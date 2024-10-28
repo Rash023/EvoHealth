@@ -45,6 +45,11 @@ export function SidebarLeft({
         title: "Doctors",
         icon: ChartNetwork,
       },
+      {
+        title:"Blogs",
+        icon: MessagesSquare,
+      }
+
     ],
   };
   return (
