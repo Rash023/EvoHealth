@@ -10,18 +10,21 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { SidebarLeft } from "@/components/Sidebar/Sidebar";
+import ReactMarkdown from "react-markdown";
+import { getModel } from "@/lib/utils";
 
 interface Message {
   query: string;
   response: string;
   isLoading?: boolean;
-  isTypingFinished?: boolean; 
+  isTypingFinished?: boolean;
 }
 
 export const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Array<Message>>([
     { query: "", response: "Welcome to evoHealth!" },
   ]);
+  const model = getModel();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const placeholders = [
@@ -42,6 +45,37 @@ export const Chat: React.FC = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const query = e.currentTarget.querySelector("input")?.value;
+    if (!query) return;
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { query, response: "", isLoading: true, isTypingFinished: false },
+    ]);
+    try {
+      const result = await model.generateContent(query);
+      const response = result.response.text();
+      setMessages((prevMessages) => {
+        const newMessages = [...prevMessages];
+        const lastMessage = newMessages[newMessages.length - 1];
+        lastMessage.response = response;
+        lastMessage.isLoading = false;
+        return newMessages;
+      });
+    } catch (error) {
+      console.error("Error querying the model - ", error);
+      setMessages((prevMessages) => {
+        const newMessages = [...prevMessages];
+        const lastMessage = newMessages[newMessages.length - 1];
+        lastMessage.response =
+          "An error occurred while processing your request.";
+        lastMessage.isLoading = false;
+        return newMessages;
+      });
+    }
+  };
 
   return (
     <SidebarProvider>
@@ -99,7 +133,9 @@ export const Chat: React.FC = () => {
                           }}
                         />
                       ) : (
-                        <div className="text-sm">{message.response}</div>
+                        <ReactMarkdown className="text-sm">
+                          {message.response}
+                        </ReactMarkdown>
                       )}
                     </div>
                   </div>
@@ -109,7 +145,10 @@ export const Chat: React.FC = () => {
           </div>
         </main>
         <div className="p-4">
-          <PlaceholdersAndVanishInput placeholders={placeholders} />
+          <PlaceholdersAndVanishInput
+            placeholders={placeholders}
+            onSubmit={onSubmit}
+          />
         </div>
       </SidebarInset>
     </SidebarProvider>
