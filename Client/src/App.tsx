@@ -12,7 +12,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/blog" element={<Blogs />} />
         <Route path="/blog/:id" element={<Blog />} />
-        <Route path="/publish" element={<Publish />} />
+        <Route path="blog/publish" element={<Publish />} />
       </Routes>
     </ThemeProvider>
   );

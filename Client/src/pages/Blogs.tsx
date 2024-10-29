@@ -30,7 +30,7 @@ export const Blogs = () => {
     "Healthy Diet",
     "Gut Health",
     "Skin Care",
-    "Immunology"
+    "Immunology",
   ];
 
   const { loading, blogs } = useBlogs();
@@ -101,7 +101,7 @@ export const Blogs = () => {
             {/* Main Feed */}
             <div className="lg:col-span-2">
               {/* Scrollable Topic Navigation with Chevron Buttons */}
-              <div className="flex items-center gap-2 px-4 py-2 lg:-mt-3 -mt-6">
+              <div className="flex items-center gap-2 px-2 py-2 lg:-mt-3 -mt-6">
                 {/* Show Left Chevron only when necessary */}
                 {showLeftChevron && (
                   <Button
@@ -183,9 +183,9 @@ export const Blogs = () => {
 
             {/* Sidebar */}
             <aside className="hidden space-y-8 lg:block">
-              <StaffPicks />
+              <StaffPicks loading={loading} />
               <RecommendedTopics />
-              <WhoToFollow />
+              <WhoToFollow loading={loading} />
             </aside>
           </div>
         </div>
