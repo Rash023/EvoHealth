@@ -7,6 +7,8 @@ import {
   ChartNetwork,
   CircleUser,
   type LucideIcon,
+  SquarePlus,
+  Rss,
 } from "lucide-react";
 import {
   Sidebar,
@@ -17,6 +19,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import {
@@ -50,8 +55,15 @@ export function SidebarLeft({
       },
       {
         title: "Blogs",
-        icon: MessagesSquare,
+        icon: Rss,
         link: "/blog",
+        subButton: [
+          {
+            title: "Add Blog",
+            icon: SquarePlus,
+            link: "/blog/publish",
+          },
+        ],
       },
     ],
   };
@@ -139,6 +151,8 @@ function NavMain({
     title: string;
     icon: LucideIcon;
     isActive?: boolean;
+    link?: string;
+    subButton?: { title: string; icon: LucideIcon; link: string }[]; // Added subButton definition
   }[];
 }) {
   return (
@@ -151,6 +165,22 @@ function NavMain({
               <span>{item.title}</span>
             </a>
           </SidebarMenuButton>
+          {item.subButton && item.subButton.length > 0 && (
+            <>
+              {item.subButton.map((sub) => (
+                <SidebarMenuSub>
+                  <SidebarMenuSubItem key={sub.title}>
+                    <SidebarMenuSubButton asChild>
+                      <a href={sub.link}>
+                        <sub.icon />
+                        <span>{sub.title}</span>
+                      </a>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                </SidebarMenuSub>
+              ))}
+            </>
+          )}
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
