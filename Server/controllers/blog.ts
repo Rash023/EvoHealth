@@ -16,6 +16,7 @@ export const blogAuthMiddleware = async (req: any, res: any, next: any) => {
     req.userId = decoded.id; 
     next();
   } catch (error) {
+    console.log(error)
     res.status(403).json({ error: 'Unauthorized, invalid token' });
   }
 };

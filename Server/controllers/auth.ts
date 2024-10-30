@@ -18,6 +18,7 @@ export const signup = async (req: any, res: any) => {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
     res.send(token);
   } catch (error) {
+    console.log(error)
     res.status(500).send("Invalid");
   }
 };
@@ -41,6 +42,7 @@ export const signin = async (req: any, res: any) => {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
     res.status(200).send(token);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
