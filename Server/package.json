@@ -14,6 +14,7 @@
     "@rash023/narrify": "^1.0.5",
     "@types/cors": "^2.8.17",
     "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
