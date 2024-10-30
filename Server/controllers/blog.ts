@@ -31,6 +31,9 @@ export const createBlogPost = async (req: any, res: any) => {
     const blog = await prisma.post.create({
       data: {
         title: body.title,
+        description :body.description,
+        domain: body.domain,
+        tag:body.tag,
         content: body.content,
         authorId,
       },
@@ -67,6 +70,9 @@ export const getAllBlogs = async (req: Request, res: Response) => {
       select: {
         content: true,
         title: true,
+        description:true,
+        tag:true,
+        domain:true,
         id: true,
         author: {
           select: {
@@ -85,11 +91,14 @@ export const getBlogById = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
     const blog = await prisma.post.findFirst({
-      where: { id },
+      where: { id:id },
       select: {
-        id: true,
-        title: true,
         content: true,
+        title: true,
+        description:true,
+        tag:true,
+        domain:true,
+        id: true,
         author: {
           select: {
             name: true,
@@ -105,3 +114,73 @@ export const getBlogById = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error fetching blog post' });
   }
 };
+
+
+export const feedbyTags=async(req: any, res: any)=>{
+  const {tags}=req.body;
+    try{
+      const blogs=await prisma.post.findMany({
+        where:{tag:{
+            in:tags,
+            not:""
+          }
+        },
+        select: {
+          content: true,
+          title: true,
+          description:true,
+          tag:true,
+          domain:true,
+          id: true,
+          author: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      })
+
+      if(!blogs){
+        return res.status(400).json("No blogs found with this id");
+      }
+
+      return res.status(200).json({blogs});
+    }
+    catch(error){
+      return res.status(500).json({message:"Internal Server Error"})
+    }
+
+}
+
+
+export const feedbyDomain=async(req: any, res: any)=>{
+  const {domain}=req.body;
+    try{
+      const blogs=await prisma.post.findMany({
+        where:{domain:domain},
+        select: {
+          content: true,
+          title: true,
+          description:true,
+          tag:true,
+          domain:true,
+          id: true,
+          author: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      })
+
+      if(!blogs){
+        return res.status(400).json("No blogs found with this domain");
+      }
+
+      return res.status(200).json({blogs});
+    }
+    catch(error){
+      return res.status(500).json({message:"Internal Server Error"})
+    }
+
+}
