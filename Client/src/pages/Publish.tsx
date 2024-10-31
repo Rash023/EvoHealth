@@ -53,7 +53,7 @@ export const Publish = () => {
             <SidebarTrigger />
           </div>
         </header>
-        <div className="flex justify-center w-full pt-8 lg:p-0 p-4">
+        <div className="flex justify-center w-full pt-8 p-4">
           <div className="max-w-screen-lg w-full">
             <label
               htmlFor="title"
