@@ -9,6 +9,7 @@ import {
   type LucideIcon,
   SquarePlus,
   Rss,
+  BookOpenTextIcon,
 } from "lucide-react";
 import {
   Sidebar,
@@ -42,6 +43,13 @@ export function SidebarLeft({
         title: "Ask eH",
         icon: Sparkles,
         link: "/",
+        subButton: [
+          {
+            title: "Ask eL",
+            link: "/report",
+            icon: BookOpenTextIcon,
+          },
+        ],
       },
       {
         title: "Messages",

@@ -5,6 +5,7 @@ import { Blogs } from "./pages/Blogs";
 import { Blog } from "./pages/Blog";
 import { Publish } from "./pages/Publish";
 import Landing from "./pages/Landing";
+import Report from "./pages/Report";
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/report" element={<Report />} />
         <Route path="/blog" element={<Blogs />} />
         <Route path="/blog/:id" element={<Blog />} />
         <Route path="blog/publish" element={<Publish />} />

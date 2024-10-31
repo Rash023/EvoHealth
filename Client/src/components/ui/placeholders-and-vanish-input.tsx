@@ -3,11 +3,15 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "./button";
+import { Paperclip } from "lucide-react";
 
 export function PlaceholdersAndVanishInput({
+  fileInputRef,
   placeholders,
   onSubmit,
 }: {
+  fileInputRef: any;
   placeholders: string[];
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }) {
@@ -21,10 +25,10 @@ export function PlaceholdersAndVanishInput({
   };
   const handleVisibilityChange = () => {
     if (document.visibilityState !== "visible" && intervalRef.current) {
-      clearInterval(intervalRef.current); 
+      clearInterval(intervalRef.current);
       intervalRef.current = null;
     } else if (document.visibilityState === "visible") {
-      startAnimation(); 
+      startAnimation();
     }
   };
 
@@ -187,6 +191,17 @@ export function PlaceholdersAndVanishInput({
         )}
         ref={canvasRef}
       />
+      {fileInputRef && (
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          onClick={() => fileInputRef.current?.click()}
+          className="absolute left-1 top-1/2 transform -translate-y-1/2 bg-transparent rotate-45 scale-x-[-1] z-40" // Add z-index and position styles
+        >
+          <Paperclip className="h-4 w-4" />
+        </Button>
+      )}
       <input
         onChange={(e) => {
           if (!animating) {
@@ -198,7 +213,7 @@ export function PlaceholdersAndVanishInput({
         value={value}
         type="text"
         className={cn(
-          "w-full relative text-sm sm:text-base z-50 border-none dark:text-white bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 pl-4 sm:pl-10 pr-20",
+          "w-full relative text-sm sm:text-base z-10 border-none dark:text-white bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 pl-10 pr-20", // Ensure padding is sufficient to avoid overlap
           animating && "text-transparent dark:text-transparent"
         )}
       />
