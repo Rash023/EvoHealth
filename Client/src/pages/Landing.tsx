@@ -1,7 +1,7 @@
 import React from "react";
-import { Navbar } from "@/components/Navbar/Navbar";
-import { Hero } from "@/components/Hero/Hero";
-import Footer from "@/components/Footer/Footer";
+import { Navbar } from "@/components/Home/Navbar";
+import { Hero } from "@/components/Home/Hero";
+import Footer from "@/components/Home/Footer";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 
 const Landing: React.FC = () => {

@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,7 +10,8 @@ import {
 } from "@/components/ui/sidebar";
 import { SidebarLeft } from "@/components/Sidebar/Sidebar";
 import ReactMarkdown from "react-markdown";
-import { getModel } from "@/lib/utils";
+import remarkGfm from "remark-gfm"; // Import remark-gfm plugin
+import { evoGPTHistory, evoGPTPromptPlaceholders, getModel } from "@/lib/utils";
 
 interface Message {
   query: string;
@@ -24,17 +24,13 @@ export const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Array<Message>>([
     { query: "", response: "Welcome to evoHealth!" },
   ]);
-  const model = getModel();
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [history, setHistory] =
+    useState<Array<{ role: string; parts: { text: string }[] }>>(evoGPTHistory);
 
-  const placeholders = [
-    "What are the symptoms of seasonal allergies?",
-    "How can I manage stress effectively?",
-    "What should I do if I have a persistent cough?",
-    "How can I improve my sleep quality?",
-    "What are some home remedies for a sore throat?",
-    "How can I boost my immune system naturally?",
-  ];
+  const model = getModel();
+  const placeholders = evoGPTPromptPlaceholders;
+
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     if (scrollAreaRef.current) {
@@ -50,13 +46,24 @@ export const Chat: React.FC = () => {
     e.preventDefault();
     const query = e.currentTarget.querySelector("input")?.value;
     if (!query) return;
+
     setMessages((prevMessages) => [
       ...prevMessages,
       { query, response: "", isLoading: true, isTypingFinished: false },
     ]);
+    setHistory((prevHistory) => [
+      ...prevHistory,
+      { role: "user", parts: [{ text: query }] },
+    ]);
+
     try {
-      const result = await model.generateContent(query);
-      const response = result.response.text();
+      const chatSession = await model.startChat({
+        history,
+      });
+
+      const result = await chatSession.sendMessage(query);
+      const response = await result.response.text();
+
       setMessages((prevMessages) => {
         const newMessages = [...prevMessages];
         const lastMessage = newMessages[newMessages.length - 1];
@@ -64,8 +71,13 @@ export const Chat: React.FC = () => {
         lastMessage.isLoading = false;
         return newMessages;
       });
+
+      setHistory((prevHistory) => [
+        ...prevHistory,
+        { role: "model", parts: [{ text: response }] },
+      ]);
     } catch (error) {
-      console.error("Error querying the model - ", error);
+      console.error(error);
       setMessages((prevMessages) => {
         const newMessages = [...prevMessages];
         const lastMessage = newMessages[newMessages.length - 1];
@@ -94,17 +106,25 @@ export const Chat: React.FC = () => {
             <div className="space-y-4">
               {messages.map((message, index) => (
                 <div key={index} className="last:mb-0">
-                  <div className="flex items-start justify-end">
-                    <div className="flex-grow text-right">
-                      <p className="text-sm">{message.query}</p>
+                  {message.query && (
+                    <div className="flex items-start justify-end mb-2">
+                      <div
+                        className="message-box bg-gray-700 p-4 rounded-lg shadow-md text-right"
+                        style={{ maxWidth: "70%" }}
+                      >
+                        <p className="text-sm">{message.query}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-start mb-4 mt-1">
+                  )}
+                  <div className="flex items-start mb-4">
                     <Avatar className="mr-4">
-                      <AvatarImage src="/ai-avatar.png" alt="dh" />
+                      <AvatarImage src="/ai-avatar.png" alt="AI Avatar" />
                       <AvatarFallback>eH</AvatarFallback>
                     </Avatar>
-                    <div className="flex-grow mt-2" style={{ maxWidth: "70%" }}>
+                    <div
+                      className="message-box bg-gray-700 p-4 rounded-lg shadow-md"
+                      style={{ maxWidth: "70%" }}
+                    >
                       {message.isLoading ? (
                         <>
                           <Skeleton className="h-4 w-[250px]" />
@@ -133,7 +153,10 @@ export const Chat: React.FC = () => {
                           }}
                         />
                       ) : (
-                        <ReactMarkdown className="text-sm">
+                        <ReactMarkdown
+                          className="text-sm"
+                          remarkPlugins={[remarkGfm]} 
+                        >
                           {message.response}
                         </ReactMarkdown>
                       )}
