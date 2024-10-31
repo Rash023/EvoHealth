@@ -1,9 +1,6 @@
 import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import jwt from "jsonwebtoken";
-import { createBlogInput, updateBlogInput } from '@rash023/narrify';
-
-const router = express.Router();
 const prisma = new PrismaClient();
 
 export const blogAuthMiddleware = async (req: any, res: any, next: any) => {
@@ -23,10 +20,6 @@ export const blogAuthMiddleware = async (req: any, res: any, next: any) => {
 
 export const createBlogPost = async (req: any, res: any) => {
   const body = req.body;
-  const { success } = createBlogInput.safeParse(body);
-  if (!success) {
-    return res.status(411).json({ message: 'Inputs not correct' });
-  }
   const authorId = req.userId;
   try {
     const blog = await prisma.post.create({
@@ -47,10 +40,7 @@ export const createBlogPost = async (req: any, res: any) => {
 
 export const updateBlogPost = async (req: any, res: any) => {
   const body = req.body;
-  const { success } = updateBlogInput.safeParse(body);
-  if (!success) {
-    return res.status(411).json({ message: 'Inputs not correct' });
-  }
+  
   try {
     const blog = await prisma.post.update({
       where: { id: body.id },
