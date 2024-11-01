@@ -186,19 +186,19 @@ const SkeletonFour = () => {
       >
         <Skeleton className="h-10 w-10 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 flex-shrink-0" />
         <p className="sm:text-sm text-xs text-center font-semibold text-neutral-500 mt-4">
-          Just code in Vanilla Javascript
+         We’re building something special for you!
         </p>
         <p className="border border-red-500 bg-red-100 dark:bg-red-900/20 text-red-600 text-xs rounded-full px-2 py-0.5 mt-4">
-          Developer
+        Coming Soon
         </p>
       </motion.div>
       <motion.div className="h-full relative z-20 w-1/3 rounded-2xl bg-white p-4 dark:bg-black dark:border-white/[0.1] border border-neutral-200 flex flex-col items-center justify-center">
         <Skeleton className="h-10 w-10 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 flex-shrink-0" />
         <p className="sm:text-sm text-xs text-center font-semibold text-neutral-500 mt-4">
-          Tailwind CSS is cool, you know
+        Stay tuned for exciting updates!
         </p>
         <p className="border border-green-500 bg-green-100 dark:bg-green-900/20 text-green-600 text-xs rounded-full px-2 py-0.5 mt-4">
-          UI/UX
+          Coming Soon
         </p>
       </motion.div>
       <motion.div
@@ -207,10 +207,10 @@ const SkeletonFour = () => {
       >
         <Skeleton className="h-10 w-10 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 flex-shrink-0" />
         <p className="sm:text-sm text-xs text-center font-semibold text-neutral-500 mt-4">
-          I love angular, RSC, and Redux.
+        Great things are on the way!
         </p>
         <p className="border border-orange-500 bg-orange-100 dark:bg-orange-900/20 text-orange-600 text-xs rounded-full px-2 py-0.5 mt-4">
-          Backend
+          Coming Soon
         </p>
       </motion.div>
     </motion.div>
@@ -254,15 +254,14 @@ const SkeletonFive = () => {
       >
         <div className="h-10 w-10 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 flex-shrink-0" />
         <p className="text-xs text-neutral-500">
-          There are a lot of cool framerworks out there like React, Angular,
-          Vue, Svelte that can make your life ....
+          Coming Soon
         </p>
       </motion.div>
       <motion.div
         variants={variantsSecond}
         className="flex flex-row rounded-full border border-neutral-100 dark:border-white/[0.2] p-2 items-center justify-end space-x-2 w-3/4 ml-auto bg-white dark:bg-black"
       >
-        <p className="text-xs text-neutral-500">Use PHP.</p>
+        <p className="text-xs text-neutral-500">Stay Tuned !</p>
         <div className="h-6 w-6 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 flex-shrink-0" />
       </motion.div>
     </motion.div>
@@ -273,7 +272,7 @@ const items = [
     title: "Chat with EvoHealth Model",
     description: (
       <span className="text-sm">
-        Experience the power of AI and Graph db to find people.
+        Experience the power of AI to cater your health problems.
       </span>
     ),
     header: <SkeletonOne />,
@@ -281,10 +280,10 @@ const items = [
     icon: <IconClipboardCopy className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Explore Community",
+    title: "Health Articles",
     description: (
       <span className="text-sm">
-        Gather people with similar interests and work together
+        Expand your health knowledge with articles from wellness experts.
       </span>
     ),
     header: <SkeletonTwo />,
@@ -292,10 +291,10 @@ const items = [
     icon: <IconFileBroken className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Showcase your projects",
+    title: "Analyse Reports",
     description: (
       <span className="text-sm">
-        Present your Project to everyone and get a chance to win badge
+        Upload your scan reports to perform predictive analysis.
       </span>
     ),
     header: <SkeletonThree />,
@@ -303,9 +302,9 @@ const items = [
     icon: <IconSignature className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Create your profile ",
+    title: "Coming Soon ",
     description: (
-      <span className="text-sm">People judge you by your amazing profiles</span>
+      <span className="text-sm"></span>
     ),
     header: <SkeletonFour />,
     className: "md:col-span-2",
@@ -313,9 +312,9 @@ const items = [
   },
 
   {
-    title: "Chat with users",
+    title: "Coming Soon",
     description: (
-      <span className="text-sm">Know each other by our chat feature</span>
+      <span className="text-sm"></span>
     ),
     header: <SkeletonFive />,
     className: "md:col-span-1",

@@ -11,7 +11,7 @@ export const mockBlogs = [
     id: 2,
     author: { name: "James Wilson" },
     title: "Daily Exercise Benefits",
-    content: "Benefits of exercise",
+    content: "Daily Exercise Benefits",
     publishedDate: "2nd Feb 2024",
     domain: "Fitness",
   },
