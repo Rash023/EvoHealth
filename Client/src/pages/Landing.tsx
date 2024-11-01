@@ -29,9 +29,7 @@ const Landing: React.FC = () => {
             EvoHealth
           </h1>
           <p className="mt-4 font-normal text-base text-neutral-300 max-w-xl text-center mx-auto bg-clip-text text-transparent dark:bg-white bg-black from-neutral-800 via-neutral-700 to-neutral-700 dark:from-neutral-800 dark:via-white dark:to-white">
-            The platform connects healthcare professionals and seekers through
-            intelligent matchmaking and personalized recommendations, bridging
-            health gaps and fostering impactful collaborations.
+          Where Evolution Meets Health ! Your ultimate wellness companion, offering personalized insights, nutrition tips, and support for every step of your health journey. Dive into our blog for fresh wellness tips and start your path to a healthier, happier you with EvoHealth!
           </p>
           <div className="mt-8">
             <HoverBorderGradient
@@ -42,7 +40,7 @@ const Landing: React.FC = () => {
                 window.location.href = "/home";
               }}
             >
-              <span>Login to Continue</span>
+              <span>Continue</span>
             </HoverBorderGradient>
           </div>
         </div>
