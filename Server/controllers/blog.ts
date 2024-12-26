@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import {prisma } from "../utils/db";
 import jwt from "jsonwebtoken";
-const prisma = new PrismaClient();
+
 
 export const blogAuthMiddleware = async (req: any, res: any, next: any) => {
   try {
@@ -32,7 +32,7 @@ export const createBlogPost = async (req: any, res: any) => {
         authorId,
       },
     });
-    return res.status(200).json({ id: blog.id });
+    return res.status(200).json({ id: blog.id , message:"Blog Posted Successfully!"});
   } catch (error) {
     res.status(500).json({ error: 'Error creating blog post' });
   }
