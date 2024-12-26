@@ -18,6 +18,14 @@ jobs:
         with:
           node-version: 20
 
+      - name: Create .env file
+        working-directory: Server
+        run: |
+          echo "DATABASE_URL=postgresql://postgres:mypassword@localhost:5432/test" > .env
+          echo "JWT_SECRET=Evohealth" >> .env
+          echo "LLM_API_KEY=" >> .env
+          echo "PORT=4000" >> .env
+
       - name: Install dependencies
         working-directory: Server
         run: npm install && npx prisma generate
