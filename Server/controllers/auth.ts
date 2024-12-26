@@ -1,7 +1,7 @@
-const { PrismaClient } = require("@prisma/client");
+import {prisma } from "../utils/db";
 const jwt = require("jsonwebtoken");
 
-const prisma = new PrismaClient();
+
 
 export const signup = async (req: any, res: any) => {
   const { email, password, name } = req.body;
@@ -16,10 +16,10 @@ export const signup = async (req: any, res: any) => {
     });
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-    res.send(token);
+    return res.status(200).json({token:token,message:"User Registered!"});
   } catch (error) {
     console.log(error)
-    res.status(500).send("Invalid");
+    return res.status(500).send("Invalid");
   }
 };
 
@@ -40,9 +40,11 @@ export const signin = async (req: any, res: any) => {
     }
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-    res.status(200).send(token);
+    return res.status(200).json({
+      token:token, message:"User logged in Successfully!"
+    });
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error"});
   }
 };

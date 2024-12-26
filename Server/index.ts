@@ -6,7 +6,7 @@ import { userRouter } from "./routes/user";
 import { modelRouter } from "./routes/model";
 import { rateLimit } from "express-rate-limit";
 
-const app = express();
+export const app = express();
 const rate_limiter = rateLimit({
   max: 800,
   windowMs: 60 * 60 * 1000,
@@ -38,9 +38,6 @@ app.use("/api/v1/blog", blogRouter);
 app.use("/api/v1/model", modelRouter);
 
 /* SERVER SETUP */
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
 
 export default app;
