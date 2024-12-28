@@ -1,18 +1,31 @@
 import {prisma } from "../utils/db";
 const jwt = require("jsonwebtoken");
+import {z} from "zod";
 
 
+//zod schemas
+export const SignupSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(4, "Password must be at least 6 characters long"),
+  name: z.string().min(2, "Name must be at least 2 characters long"),
+});
+
+
+export const SigninSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(4, "Password must be at least 6 characters long"),
+});
 
 export const signup = async (req: any, res: any) => {
-  const { email, password, name } = req.body;
-
-  if (!email || !password || !name) {
+  const {email,password,name}=req.body;
+  
+  if (!SignupSchema.safeParse(req.body).success) {
     return res.status(411).json({ message: 'Invalid input' });
   }
 
   try {
     const user = await prisma.user.create({
-      data: { email, password, name },
+      data: { email,password,name },
     });
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
@@ -26,7 +39,7 @@ export const signup = async (req: any, res: any) => {
 export const signin = async (req: any, res: any) => {
   const { email, password } = req.body;
 
-  if (!email || !password) {
+  if (!SigninSchema.safeParse(req.body).success) {
     return res.status(411).json({ message: 'Invalid input' });
   }
 
