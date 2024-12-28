@@ -1,34 +1,51 @@
 import express, { Request, Response } from 'express';
 import {prisma } from "../utils/db";
 import jwt from "jsonwebtoken";
+import {z} from "zod";
+
+//zod schemas
+
+const createBlogPostSchema = z.object({
+  title: z.string().min(1, "Title is required").max(20),
+  description: z.string().min(1, "Description is required").max(50),
+  domain: z.string().max(10),
+  tag: z.string().max(10),
+  content: z.string().min(1, "Content is required").max(500),
+});
+ 
+const updateBlogPostSchema = z.object({
+  id: z.string(),
+  title: z.string().max(20).optional(),
+  content: z.string().max(500).optional(),
+});
 
 
-export const blogAuthMiddleware = async (req: any, res: any, next: any) => {
-  try {
-    const header = req.headers.authorization?.replace('Bearer ', '') || '';
-    if (!header) {
-      return res.status(401).json({ error: 'Unauthorized, token missing' });
-    }
-    const decoded = jwt.verify(header, process.env.JWT_SECRET || '') as { id: string };
-    req.userId = decoded.id; 
-    next();
-  } catch (error) {
-    console.log(error)
-    res.status(403).json({ error: 'Unauthorized, invalid token' });
-  }
-};
+const getBlogByIdSchema = z.object({
+  id: z.string(),
+});
+
+const feedByTagsSchema = z.object({
+  tags: z.array(z.string().min(1, "Tag cannot be empty")),
+});
+
+const feedByDomainSchema = z.object({
+  domain: z.string().min(1, "Domain is required"),
+});
 
 export const createBlogPost = async (req: any, res: any) => {
-  const body = req.body;
+  const parsedReq = createBlogPostSchema.safeParse(req.body);
   const authorId = req.userId;
+  if(!parsedReq.success){
+    return res.status(411).json({message:"Invalid input"})
+  }
   try {
     const blog = await prisma.post.create({
       data: {
-        title: body.title,
-        description :body.description,
-        domain: body.domain,
-        tag:body.tag,
-        content: body.content,
+        title: parsedReq.data.title,
+        description :parsedReq.data.description,
+        domain: parsedReq.data.domain,
+        tag:parsedReq.data.tag,
+        content: parsedReq.data.content,
         authorId,
       },
     });
@@ -39,17 +56,21 @@ export const createBlogPost = async (req: any, res: any) => {
 };
 
 export const updateBlogPost = async (req: any, res: any) => {
-  const body = req.body;
+  const parsedReq = updateBlogPostSchema.safeParse(req.body);
+
+  if(!parsedReq.success){
+    return res.status(411).json({message:"Invalid input"})
+  }
   
   try {
     const blog = await prisma.post.update({
-      where: { id: body.id },
+      where: { id: parsedReq.data.id },
       data: {
-        title: body.title,
-        content: body.content,
+        title: parsedReq.data.title,
+        content: parsedReq.data.content,  
       },
     });
-    return res.json({ id: blog.id });
+    return res.status(200).json({ id: blog.id,message:"Blog updated successfully" });
   } catch (error) {
     res.status(500).json({ error: 'Error updating blog post' });
   }
@@ -79,16 +100,19 @@ export const getAllBlogs = async (req: Request, res: Response) => {
 };
 
 export const getBlogById = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const parsedReq = getBlogByIdSchema.safeParse(req.params);
+  if (!parsedReq.success) {
+    return res.status(411).json({ message: 'Invalid ID' });
+  }
   try {
     const blog = await prisma.post.findFirst({
-      where: { id:id },
+      where: { id: parsedReq.data.id },
       select: {
         content: true,
         title: true,
-        description:true,
-        tag:true,
-        domain:true,
+        description: true,
+        tag: true,
+        domain: true,
         id: true,
         author: {
           select: {
@@ -100,78 +124,75 @@ export const getBlogById = async (req: Request, res: Response) => {
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }
-    return res.json({ blog });
+    return res.status(200).json({ blog:blog ,message:"Blog fetched successfully"});
   } catch (error) {
     res.status(500).json({ message: 'Error fetching blog post' });
   }
 };
 
-
-export const feedbyTags=async(req: any, res: any)=>{
-  const {tags}=req.body;
-    try{
-      const blogs=await prisma.post.findMany({
-        where:{tag:{
-            in:tags,
-            not:""
-          }
+export const feedbyTags = async (req: any, res: any) => {
+  const parsedReq = feedByTagsSchema.safeParse(req.body);
+  if (!parsedReq.success) {
+    return res.status(411).json({ message: 'Invalid input' });
+  }
+  try {
+    const blogs = await prisma.post.findMany({
+      where: {
+        tag: {
+          in: parsedReq.data.tags,
+          not: '',
         },
-        select: {
-          content: true,
-          title: true,
-          description:true,
-          tag:true,
-          domain:true,
-          id: true,
-          author: {
-            select: {
-              name: true,
-            },
+      },
+      select: {
+        content: true,
+        title: true,
+        description: true,
+        tag: true,
+        domain: true,
+        id: true,
+        author: {
+          select: {
+            name: true,
           },
         },
-      })
-
-      if(!blogs){
-        return res.status(400).json("No blogs found with this id");
-      }
-
-      return res.status(200).json({blogs});
+      },
+    });
+    if (!blogs.length) {
+      return res.status(404).json({message:'No blogs found with these tags'});
     }
-    catch(error){
-      return res.status(500).json({message:"Internal Server Error"})
-    }
+    return res.status(200).json({ blogs,message:"Blogs fetched by tags successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
-}
-
-
-export const feedbyDomain=async(req: any, res: any)=>{
-  const {domain}=req.body;
-    try{
-      const blogs=await prisma.post.findMany({
-        where:{domain:domain},
-        select: {
-          content: true,
-          title: true,
-          description:true,
-          tag:true,
-          domain:true,
-          id: true,
-          author: {
-            select: {
-              name: true,
-            },
+export const feedbyDomain = async (req: any, res: any) => {
+  const parsedReq = feedByDomainSchema.safeParse(req.body);
+  if (!parsedReq.success) {
+    return res.status(411).json({ message: 'Invalid input' });
+  }
+  try {
+    const blogs = await prisma.post.findMany({
+      where: { domain: parsedReq.data.domain },
+      select: {
+        content: true,
+        title: true,
+        description: true,
+        tag: true,
+        domain: true,
+        id: true,
+        author: {
+          select: {
+            name: true,
           },
         },
-      })
-
-      if(!blogs){
-        return res.status(400).json("No blogs found with this domain");
-      }
-
-      return res.status(200).json({blogs});
+      },
+    });
+    if (!blogs.length) {
+      return res.status(400).json('No blogs found with this domain');
     }
-    catch(error){
-      return res.status(500).json({message:"Internal Server Error"})
-    }
-
-}
+    return res.status(200).json({ blogs,message:"Blogs fetched successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
