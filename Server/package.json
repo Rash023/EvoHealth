@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec ts-node bin.ts",
+    "build":"tsc -b",
     "migrate:dev": "prisma migrate dev --name init",
     "migrate:prod": "prisma migrate deploy",
     "test": "vitest"

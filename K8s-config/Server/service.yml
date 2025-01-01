@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: evohealth-backend-service
+spec:
+  selector:
+    app: evohealth-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 4000
+      nodePort: 30007 # This port can be any valid port within the NodePort range
+  type: NodePort
